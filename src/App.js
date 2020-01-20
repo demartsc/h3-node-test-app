@@ -1,7 +1,8 @@
 import React, {useState } from 'react';
 import './App.css';
 import MapGL, { Source, Layer } from 'react-map-gl';
-import { bayAreaHexes, bayAreaHexesBoundaries, brazilHexesBoundaries, brazilHexMap } from './h3Examples';
+import { laHexesBoundaries, bayAreaHexesBoundaries, brazilHexMap } from './h3Examples';
+import { scaleLinear } from 'd3-scale';
 // import * as turf from '@turf/turf';
 // import * as h3 from 'h3-js';
 
@@ -17,6 +18,10 @@ function App() {
   });
   // console.log('checking turf result', h3.polyfill(turf.bboxPolygon([-73.9872354804, -33.7683777809, -34.7299934555, 5.24448639569]).geometry.coordinates,4));
 
+  const colorScale = scaleLinear()
+  .domain([0,1])
+  .range(["#2c7bb6", "#00a6ca","#00ccbc","#90eb9d","#ffff8c",
+          "#f9d057","#f29e2e","#e76818","#d7191c"]);
 
   const hexLayer = { 
     id: 'h3_hex_layer',
@@ -35,13 +40,16 @@ function App() {
     paint: {
     'fill-color': {
       property: 'value',
-      stops: [[0, '#fff'], [.5, '#f00']]
+      stops: [
+        [0, '#fff'],
+        [.5, '#f00']
+      ]
       },
       'fill-opacity': 0.6
     }
   }
 
-  console.log('bay area hexes', brazilHexMap);
+  console.log('bay area hexes', brazilHexMap, JSON.stringify(laHexesBoundaries));
   return (
     <div className="App">
       <header className="App-header">
@@ -53,10 +61,10 @@ function App() {
         onViewportChange={setViewport}
         mapboxApiAccessToken={MAPBOX_TOKEN}
       >
-        <Source id="bay-area" type="geojson" data={bayAreaHexesBoundaries}>
+        <Source id="bay-area" type="geojson" data={laHexesBoundaries}>
           <Layer {...hexLayer} />
         </Source>
-        <Source id="brazil-data" type="geojson" data={brazilHexesBoundaries}>
+        <Source id="brazil-data" type="geojson" data={bayAreaHexesBoundaries}>
           <Layer {...BrazilLayer} />
         </Source>
       </MapGL>

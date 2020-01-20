@@ -1,6 +1,16 @@
 import * as h3 from 'h3-js';
 import geojson2h3 from 'geojson2h3';
 import * as turf from '@turf/turf';
+import * as d3dsv from 'd3-dsv';
+
+function getCSVdata( ) {
+    var myData = [];
+    d3dsv(",","kepler_cali_homes.csv", d => d).then( d => {
+        myData.push( d );
+        console.log( d );
+    }); 
+    return myData;
+}
 
 export const h3index = h3.geoToH3(37.77, -122.43, 9)
 export const h3center = h3.h3ToGeo(h3index)
@@ -38,6 +48,14 @@ export const brazilHexesBoundaries = geojson2h3.h3SetToFeatureCollection(
     Object.keys(brazilHexMap), hex => ({ value: brazilHexMap[hex]})
 );
 
+export const laHexes = h3.polyfill([
+    [34.065, -118.289],
+    [34.043, -118.289],
+    [34.043, -118.245],
+    [34.065, -118.245],
+    [34.065, -118.289],
+  ], 10)
+export const laHexesBoundaries = geojson2h3.h3SetToFeatureCollection(laHexes);
 // export const bayAreaHexesBoundaries = bayAreaHexes.map(hex => {
 //     const tmp = h3.h3ToGeoBoundary(hex);
 //     tmp.push(tmp[0]);
